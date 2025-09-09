@@ -1,4 +1,5 @@
-// --- PARTE 1: CONFIGURAÇÃO E CREDENCIAIS ---
+// --- CÓDIGO DE VERIFICAÇÃO FINAL PARA script.js ---
+
 const firebaseConfig = {
     apiKey: "AIzaSyB-YofsWheB0UWDoIZN35egVLpqFILUZL8",
     authDomain: "iotsenaiat2.firebaseapp.com",
@@ -10,30 +11,50 @@ const firebaseConfig = {
     measurementId: "G-PQH1CMDYSL"
 };
 
-// --- PARTE 2: INICIALIZAÇÃO E REFERÊNCIAS ---
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const database = firebase.database();
 
 const loginContainer = document.getElementById('login-container');
 const emailInput = document.getElementById('email');
-// ... (outros elementos)
+const senhaInput = document.getElementById('senha');
+const btnLogin = document.getElementById('btnLogin');
+const btnCadastrar = document.getElementById('btnCadastrar');
+const errorMessage = document.getElementById('error-message');
+
+const dashboardContainer = document.getElementById('dashboard-container');
+const tempElement = document.getElementById('temperatura');
+const umidadeElement = document.getElementById('umidade');
 const sensacaoElement = document.getElementById('sensacao');
 const ultimaMedicaoElement = document.getElementById('ultimaMedicao');
 const btnSair = document.getElementById('btnSair');
 
 let dataInterval;
 
-// --- PARTE 3: LÓGICA DE AUTENTICAÇÃO ---
-// (Esta parte continua a mesma)
-btnCadastrar.addEventListener('click', () => { /* ... */ });
-btnLogin.addEventListener('click', () => { /* ... */ });
-btnSair.addEventListener('click', () => { /* ... */ });
-auth.onAuthStateChanged(user => { /* ... */ });
+btnCadastrar.addEventListener('click', () => { /* ...código original... */ });
+btnLogin.addEventListener('click', () => { /* ...código original... */ });
+btnSair.addEventListener('click', () => { auth.signOut(); });
 
-// --- PARTE 4: LÓGICA DE BUSCA DE DADOS ---
-function startDataFetching() { /* ... */ }
-function stopDataFetching() { /* ... */ }
+auth.onAuthStateChanged(user => {
+    if (user) {
+        loginContainer.style.display = 'none';
+        dashboardContainer.style.display = 'block';
+        startDataFetching();
+    } else {
+        loginContainer.style.display = 'block';
+        dashboardContainer.style.display = 'none';
+        stopDataFetching();
+    }
+});
+
+function startDataFetching() {
+    buscarDados();
+    dataInterval = setInterval(buscarDados, 10000);
+}
+
+function stopDataFetching() {
+    clearInterval(dataInterval);
+}
 
 async function buscarDados() {
     const user = auth.currentUser;
@@ -46,7 +67,7 @@ async function buscarDados() {
         const response = await fetch(URL_SEGURA);
         const dados = await response.json();
 
-        // --- LINHA ESPIÃ ADICIONADA ---
+        // LINHA DE DEBUG: VAI NOS MOSTRAR OS DADOS EXATOS QUE CHEGARAM
         console.log("Dados recebidos do Firebase:", dados);
 
         if (dados && !dados.error) {
@@ -66,3 +87,18 @@ async function buscarDados() {
         console.error("Erro ao buscar dados:", error);
     }
 }
+
+// Funções de login para manter o código completo
+btnLogin.addEventListener('click', () => {
+    const email = emailInput.value;
+    const senha = senhaInput.value;
+    auth.signInWithEmailAndPassword(email, senha).catch(error => errorMessage.textContent = error.message);
+});
+
+btnCadastrar.addEventListener('click', () => {
+    const email = emailInput.value;
+    const senha = senhaInput.value;
+    auth.createUserWithEmailAndPassword(email, senha)
+        .then(() => alert('Conta criada com sucesso! Você já está logado.'))
+        .catch(error => errorMessage.textContent = error.message);
+});
