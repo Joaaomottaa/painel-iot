@@ -21,7 +21,6 @@ body {
     backdrop-filter: blur(10px);
 }
 
-/* Estilos para o formulário de login */
 .form-group {
     display: flex;
     flex-direction: column;

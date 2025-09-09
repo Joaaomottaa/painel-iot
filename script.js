@@ -106,7 +106,7 @@ async function buscarDados() {
             
             ultimaMedicaoElement.innerText = new Date().toLocaleTimeString('pt-BR');
         } else {
-            ultimaMedicaoElement.innerText = "Sem permissão para ler dados.";
+            ultimaMedicaoElement.innerText = "Sem permissão para ler dados";
         }
     } catch (error) {
         console.error("Erro ao buscar dados:", error);
