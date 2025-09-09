@@ -6,19 +6,19 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: linear-gradient(135deg, #0f172a, #1e3a8a); /* Gradiente de azul escuro */
+    background: linear-gradient(135deg, #0f172a, #1e3a8a); 
     color: #f8fafc;
     margin: 0;
 }
 
 .container {
     text-align: center;
-    background-color: rgba(30, 41, 59, 0.5); /* Fundo semi-transparente */
+    background-color: rgba(30, 41, 59, 0.5); 
     padding: 40px 50px;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px); /* Efeito de vidro fosco */
+    backdrop-filter: blur(10px); 
 }
 
 h1 {
@@ -52,7 +52,7 @@ h1 {
     margin: 0;
     font-size: 1.5em;
     font-weight: 400;
-    color: #94a3b8; /* Cinza azulado para o título */
+    color: #94a3b8; 
 }
 
 .card p {
@@ -64,6 +64,6 @@ h1 {
 
 .footer {
     font-size: 0.9em;
-    color: #cbd5e1; /* Cinza azulado claro */
+    color: #cbd5e1;
     margin-top: 20px;
 }
