@@ -1,55 +1,115 @@
+// --- PARTE 1: CONFIGURAÇÃO E CREDENCIAIS ---
+const firebaseConfig = {
+    apiKey: "AIzaSyB-YofsWheB0UWDoIZN35egVLpqFILUZL8",
+    authDomain: "iotsenaiat2.firebaseapp.com",
+    databaseURL: "https://iotsenaiat2-default-rtdb.firebaseio.com",
+    projectId: "iotsenaiat2",
+    storageBucket: "iotsenaiat2.firebasestorage.app",
+    messagingSenderId: "877913679706",
+    appId: "1:877913679706:web:3675fc2c66214fe563",
+    measurementId: "G-PQH1CMDYSL"
+};
 
-const FIREBASE_URL = "https://iotsenaiat2-default-rtdb.firebaseio.com/sensores.json?auth=cf7gy734Kab1QB3VnYGVSnGnAKvQpJerlpR7FbB5";
+// --- PARTE 2: INICIALIZAÇÃO E REFERÊNCIAS ---
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const database = firebase.database();
 
+// Elementos da tela de Login
+const loginContainer = document.getElementById('login-container');
+const emailInput = document.getElementById('email');
+const senhaInput = document.getElementById('senha');
+const btnLogin = document.getElementById('btnLogin');
+const btnCadastrar = document.getElementById('btnCadastrar');
+const errorMessage = document.getElementById('error-message');
+
+// Elementos da tela do Painel
+const dashboardContainer = document.getElementById('dashboard-container');
 const tempElement = document.getElementById('temperatura');
 const umidadeElement = document.getElementById('umidade');
 const ultimaMedicaoElement = document.getElementById('ultimaMedicao');
+const btnSair = document.getElementById('btnSair');
 
+let dataInterval; // Variável para controlar o intervalo de busca de dados
 
-let ultimaTemperatura = null;
-let ultimaUmidade = null;
+// --- PARTE 3: LÓGICA DE AUTENTICAÇÃO ---
 
-async function buscarDados() {
-    try {
-        const response = await fetch(FIREBASE_URL);
-        if (!response.ok) {
-            throw new Error('Erro na rede: ' + response.statusText);
-        }
-        const dados = await response.json();
+// Criar conta
+btnCadastrar.addEventListener('click', () => {
+    const email = emailInput.value;
+    const senha = senhaInput.value;
+    auth.createUserWithEmailAndPassword(email, senha)
+        .then(userCredential => {
+            alert('Conta criada com sucesso! Você já está logado.');
+        })
+        .catch(error => {
+            errorMessage.textContent = error.message;
+        });
+});
 
-        if (dados) {
-            const novaTemperatura = dados.temperatura;
-            const novaUmidade = dados.umidade;
+// Entrar (Login)
+btnLogin.addEventListener('click', () => {
+    const email = emailInput.value;
+    const senha = senhaInput.value;
+    auth.signInWithEmailAndPassword(email, senha)
+        .catch(error => {
+            errorMessage.textContent = error.message;
+        });
+});
 
-            if (novaTemperatura !== ultimaTemperatura || novaUmidade !== ultimaUmidade) {
-                
-                console.log("Novos dados recebidos! Atualizando a tela.");
+// Sair (Logout)
+btnSair.addEventListener('click', () => {
+    auth.signOut();
+});
 
-                ultimaTemperatura = novaTemperatura;
-                ultimaUmidade = novaUmidade;
-
-                if (novaTemperatura !== undefined) {
-                    tempElement.innerText = novaTemperatura.toFixed(1) + " °C";
-                }
-
-                if (novaUmidade !== undefined) {
-                    umidadeElement.innerText = novaUmidade.toFixed(1) + " %";
-                }
-
-                const agora = new Date();
-                const horaFormatada = agora.toLocaleTimeString('pt-BR', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-                ultimaMedicaoElement.innerText = horaFormatada;
-            }
-        }
-    } catch (error) {
-        console.error("Falha ao buscar dados do Firebase:", error);
-        ultimaMedicaoElement.innerText = "Erro na conexão.";
+// Monitor de estado da autenticação (a mágica acontece aqui!)
+auth.onAuthStateChanged(user => {
+    if (user) {
+        // Usuário está logado
+        loginContainer.style.display = 'none';
+        dashboardContainer.style.display = 'block';
+        startDataFetching();
+    } else {
+        // Usuário está deslogado
+        loginContainer.style.display = 'block';
+        dashboardContainer.style.display = 'none';
+        stopDataFetching();
     }
+});
+
+// --- PARTE 4: LÓGICA DE BUSCA DE DADOS (AGORA SEGURA) ---
+
+function startDataFetching() {
+    buscarDados(); // Busca imediatamente
+    dataInterval = setInterval(buscarDados, 10000); // E depois a cada 10 segundos
 }
 
-buscarDados();
-setInterval(buscarDados, 5000);
+function stopDataFetching() {
+    clearInterval(dataInterval); // Para de buscar os dados quando o usuário sai
+}
+
+async function buscarDados() {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    try {
+        // Pega o token de autenticação do usuário logado
+        const idToken = await user.getIdToken();
+        
+        // Constrói a URL segura, usando o token do usuário para autenticar
+        const URL_SEGURA = `https://iotsenaiat2-default-rtdb.firebaseio.com/sensores.json?auth=${idToken}`;
+
+        const response = await fetch(URL_SEGURA);
+        const dados = await response.json();
+
+        if (dados && !dados.error) {
+            tempElement.innerText = (dados.temperatura || 0).toFixed(1) + " °C";
+            umidadeElement.innerText = (dados.umidade || 0).toFixed(1) + " %";
+            ultimaMedicaoElement.innerText = new Date().toLocaleTimeString('pt-BR');
+        } else {
+            ultimaMedicaoElement.innerText = "Sem permissão para ler dados.";
+        }
+    } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+    }
+}
