@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #0f172a, #1e3a8a); /* Gradiente de azul escuro */
+    color: #f8fafc;
+    margin: 0;
+}
+
+.container {
+    text-align: center;
+    background-color: rgba(30, 41, 59, 0.5); /* Fundo semi-transparente */
+    padding: 40px 50px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px); /* Efeito de vidro fosco */
+}
+
+h1 {
+    color: #ffffff;
+    margin-top: 0;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.card-container {
+    display: flex;
+    gap: 30px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background-color: rgba(14, 23, 43, 0.7);
+    padding: 30px;
+    border-radius: 15px;
+    min-width: 200px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.card h2 {
+    margin: 0;
+    font-size: 1.5em;
+    font-weight: 400;
+    color: #94a3b8; /* Cinza azulado para o título */
+}
+
+.card p {
+    font-size: 4em;
+    font-weight: 600;
+    margin: 10px 0 0 0;
+    color: #ffffff;
+}
+
+.footer {
+    font-size: 0.9em;
+    color: #cbd5e1; /* Cinza azulado claro */
+    margin-top: 20px;
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Monitoramento IoT</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Painel de Monitoramento IoT</h1>
+        <div class="card-container">
+            <div class="card">
+                <h2>Temperatura</h2>
+                <p id="temperatura">-- °C</p>
+            </div>
+            <div class="card">
+                <h2>Umidade</h2>
+                <p id="umidade">-- %</p>
+            </div>
+        </div>
+        <div class="footer">
+            Última medição: <span id="ultimaMedicao">Aguardando dados...</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
