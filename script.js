@@ -27,13 +27,14 @@ const errorMessage = document.getElementById('error-message');
 const dashboardContainer = document.getElementById('dashboard-container');
 const tempElement = document.getElementById('temperatura');
 const umidadeElement = document.getElementById('umidade');
-const sensacaoElement = document.getElementById('sensacao'); // NOVO ELEMENTO
+const sensacaoElement = document.getElementById('sensacao'); // Garante que este elemento seja encontrado
 const ultimaMedicaoElement = document.getElementById('ultimaMedicao');
 const btnSair = document.getElementById('btnSair');
 
 let dataInterval;
 
 // --- PARTE 3: LÓGICA DE AUTENTICAÇÃO ---
+// (Esta parte continua a mesma)
 btnCadastrar.addEventListener('click', () => {
     const email = emailInput.value;
     const senha = senhaInput.value;
@@ -61,12 +62,10 @@ btnSair.addEventListener('click', () => {
 
 auth.onAuthStateChanged(user => {
     if (user) {
-        // Usuário está logado
         loginContainer.style.display = 'none';
         dashboardContainer.style.display = 'block';
         startDataFetching();
     } else {
-        // Usuário está deslogado
         loginContainer.style.display = 'block';
         dashboardContainer.style.display = 'none';
         stopDataFetching();
@@ -95,10 +94,16 @@ async function buscarDados() {
         const dados = await response.json();
 
         if (dados && !dados.error) {
-            tempElement.innerText = (dados.temperatura || 0).toFixed(1) + " °C";
-            umidadeElement.innerText = (dados.umidade || 0).toFixed(1) + " %";
-            // LÓGICA ATUALIZADA AQUI
-            sensacaoElement.innerText = (dados.sensacao_termica || 0).toFixed(1) + " °C";
+            // --- CORREÇÃO ESTÁ AQUI ---
+            // Garantimos que estamos buscando exatamente "sensacao_termica" como no Firebase
+            const temperatura = dados.temperatura;
+            const umidade = dados.umidade;
+            const sensacao_termica = dados.sensacao_termica; // Acessa o valor com o nome correto
+
+            tempElement.innerText = (temperatura || 0).toFixed(1) + " °C";
+            umidadeElement.innerText = (umidade || 0).toFixed(1) + " %";
+            sensacaoElement.innerText = (sensacao_termica || 0).toFixed(1) + " °C"; // Exibe o valor
+            
             ultimaMedicaoElement.innerText = new Date().toLocaleTimeString('pt-BR');
         } else {
             ultimaMedicaoElement.innerText = "Sem permissão para ler dados.";
